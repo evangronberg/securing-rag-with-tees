@@ -1,5 +1,8 @@
 FROM amazonlinux
 
+ARG KMS_KEY_ID
+ENV KMS_KEY_ID=${KMS_KEY_ID}
+
 RUN mkdir /app
 WORKDIR /app
 COPY . .
