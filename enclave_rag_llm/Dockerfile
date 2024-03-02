@@ -1,8 +1,5 @@
 FROM amazonlinux
 
-ENV HELLO="Hello from the enclave side!"
-COPY hello.sh /bin/hello.sh
-
 RUN mkdir /app
 WORKDIR /app
 COPY . .
