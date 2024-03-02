@@ -37,6 +37,8 @@ source .venv/bin/activate
 sudo ./.venv/bin/python -m pip install -r requirements.txt
 sudo ./.venv/bin/python download_model.py
 
+echo "export MY_ENV_VARIABLE='${KMS_KEY_ID}'" >> /etc/profile
+
 
 # THE BLOCK OF COMMANDS BELOW ARE ADAPTED FROM THE FOLLOWING LINK:
 # https://docs.aws.amazon.com/enclaves/latest/user/getting-started.html
