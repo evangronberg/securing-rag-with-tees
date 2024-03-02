@@ -1,7 +1,7 @@
 FROM amazonlinux
 
-ENV HELLO="Hello from the enclave side!"
-COPY hello.sh /bin/hello.sh
+ARG KMS_KEY_ID
+ENV KMS_KEY_ID=${KMS_KEY_ID}
 
 RUN mkdir /app
 WORKDIR /app

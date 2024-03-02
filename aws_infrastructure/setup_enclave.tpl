@@ -42,7 +42,7 @@ sudo ./.venv/bin/python download_model.py
 # https://docs.aws.amazon.com/enclaves/latest/user/getting-started.html
 
 # Build the Docker image that will go inside the Enclave
-docker build enclave_rag_llm -t enclave_rag_llm
+docker build enclave_rag_llm -t enclave_rag_llm --build-arg KMS_KEY_ID=${KMS_KEY_ID}
 # Convert the Docker image to an Enclave image file
 sudo nitro-cli build-enclave --docker-uri enclave_rag_llm:latest --output-file enclave_rag_llm.eif
 # Run the Enclave using the image file produced above; specify Enclave size

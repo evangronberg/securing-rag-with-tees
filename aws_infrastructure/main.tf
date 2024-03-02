@@ -8,6 +8,12 @@ provider "aws" {
   region = "us-west-1"
 }
 
+resource "aws_kms_key" "enclave_kms_key" {
+  tags = {
+    Name = "enclave-kms-key"
+  }
+}
+
 resource "aws_vpc" "enclave_vpc" {
   cidr_block = "10.0.0.0/16"
 
@@ -85,6 +91,14 @@ resource "aws_network_interface" "enclave_network_interface" {
   }
 }
 
+data "template_file" "enclave_setup_script" {
+  template = file("${path.module}/setup_enclave.tpl")
+
+  vars = {
+    KMS_KEY_ID = aws_kms_key.enclave_kms_key.id
+  }
+}
+
 resource "aws_instance" "enclave_instance" {
   ami           = "ami-07619059e86eaaaa2" # Amazon Linux 2023 AMI
   instance_type = "m5.xlarge"
@@ -105,5 +119,5 @@ resource "aws_instance" "enclave_instance" {
   tags = {
     Name = "enclave-instance"
   }
-  user_data = file("${path.module}/setup_enclave.sh")
+  user_data = data.template_file.enclave_setup_script.rendered
 }

@@ -3,13 +3,13 @@ Module for running the LLM on RAG-enhanced prompts.
 """
 
 # Python-native dependencies
+import os
 import json
 import base64
 import socket
 
 # External dependencies
 import boto3
-import transformers
 
 def decrypt_prompt(payload: dict) -> str:
     """
@@ -41,7 +41,7 @@ def encrypt_llm_response(payload: dict, llm_response: str) -> bytes:
         aws_session_token=payload['token']
     )
     kms_response = kms_client.encrypt(
-        KeyId='843f4e30-61ec-4b36-97b7-5a9df4a79f59', # TODO: Need a way to pull this in
+        KeyId=os.environ['KMS_KEY_ID'],
         Plaintext=llm_response,
     )
     llm_response_ciphertext = kms_response['CiphertextBlob']
