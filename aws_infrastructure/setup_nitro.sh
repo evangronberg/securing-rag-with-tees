@@ -34,8 +34,8 @@ sudo python3 get-pip.py
 sudo python3 -m pip install virtualenv
 sudo python3 -m virtualenv .venv 
 source .venv/bin/activate
-sudo pip install -r requirements.txt
-sudo python download_model.py
+sudo ./.venv/bin/python -m pip install -r requirements.txt
+sudo ./.venv/bin/python download_model.py
 
 
 # THE BLOCK OF COMMANDS BELOW ARE ADAPTED FROM THE FOLLOWING LINK:
@@ -44,6 +44,6 @@ sudo python download_model.py
 # Build the Docker image that will go inside the Enclave
 docker build enclave_rag_llm -t enclave_rag_llm
 # Convert the Docker image to an Enclave image file
-nitro-cli build-enclave --docker-uri enclave_rag_llm:latest --output-file enclave_rag_llm.eif
+sudo nitro-cli build-enclave --docker-uri enclave_rag_llm:latest --output-file enclave_rag_llm.eif
 # Run the Enclave using the image file produced above; specify Enclave size
-nitro-cli run-enclave --cpu-count 2 --memory 512 --enclave-cid 16 --eif-path enclave_rag_llm.eif --debug-mode
+sudo nitro-cli run-enclave --cpu-count 2 --memory 512 --enclave-cid 16 --eif-path enclave_rag_llm.eif --debug-mode
