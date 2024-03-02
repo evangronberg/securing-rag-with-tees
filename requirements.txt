@@ -1,4 +1,6 @@
 torch
+click
+requests
 # openai
 # jupyter
 # chromadb

@@ -3,7 +3,6 @@ Module for running the LLM on RAG-enhanced prompts.
 """
 
 # Python-native dependencies
-import os
 import json
 import base64
 import socket
@@ -42,7 +41,7 @@ def encrypt_llm_response(payload: dict, llm_response: str) -> bytes:
         aws_session_token=payload['token']
     )
     kms_response = kms_client.encrypt(
-        KeyId=os.environ['KMS_KEY_ID'],
+        KeyId='843f4e30-61ec-4b36-97b7-5a9df4a79f59', # TODO: Need a way to pull this in
         Plaintext=llm_response,
     )
     llm_response_ciphertext = kms_response['CiphertextBlob']
@@ -50,6 +49,7 @@ def encrypt_llm_response(payload: dict, llm_response: str) -> bytes:
 
 def run_app() -> None:
     """
+    Serves the LLM app within the Nitro Enclave.
     """
     vsock_socket = socket.socket(socket.AF_VSOCK, socket.SOCK_STREAM)
     cid = socket.VMADDR_CID_ANY # To listen for a connection from any CID

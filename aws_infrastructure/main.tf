@@ -105,5 +105,5 @@ resource "aws_instance" "enclave_instance" {
   tags = {
     Name = "enclave-instance"
   }
-  user_data = file("${path.module}/setup_nitro.sh")
+  user_data = file("${path.module}/setup_enclave.sh")
 }
