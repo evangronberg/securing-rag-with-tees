@@ -1,0 +1,7 @@
+openai
+jupyter
+chromadb
+tiktoken
+langchain
+wikipedia
+python-dotenv
