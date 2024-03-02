@@ -25,6 +25,8 @@ sudo systemctl enable --now docker
 sudo sh -c "echo -e 'memory_mib: 512\ncpu_count: 2' > /etc/nitro_enclaves/allocator.yaml"
 
 # Get the code repository and download the model
+sudo dnf update
+sudo dnf install git -y
 git clone https://github.com/evangronberg/securing-rag-with-tees.git
 cd securing-rag-with-tees
 python3 -m virtualenv .venv 
