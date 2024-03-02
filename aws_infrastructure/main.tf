@@ -8,6 +8,12 @@ provider "aws" {
   region = "us-west-1"
 }
 
+resource "aws_kms_key" "enclave_kms_key" {
+  tags = {
+    Name = "enclave-kms-key"
+  }
+}
+
 resource "aws_vpc" "enclave_vpc" {
   cidr_block = "10.0.0.0/16"
 
@@ -105,5 +111,8 @@ resource "aws_instance" "enclave_instance" {
   tags = {
     Name = "enclave-instance"
   }
-  user_data = file("${path.module}/setup_enclave.sh")
+  user_data = templatefile(
+    "${path.module}/setup_enclave.tftpl",
+    {KMS_KEY_ID=aws_kms_key.enclave_kms_key.key_id}
+  )
 }
