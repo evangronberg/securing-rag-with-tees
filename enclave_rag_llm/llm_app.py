@@ -10,7 +10,6 @@ import socket
 
 # External dependencies
 import boto3
-import requests
 import transformers
 
 def decrypt_prompt(payload: dict) -> str:
@@ -64,7 +63,9 @@ def run_app() -> None:
         prompt = decrypt_prompt(payload)
 
         if prompt == 'KMS Error. Decryption Failed.':
-            result = {'error': 'Decryption of LLM prompt failed due to KMS error'}
+            result = {
+                'error': 'Decryption of LLM prompt failed due to KMS error'
+            }
         else:
             llm_response = prompt.upper() # TODO: Insert actual LLM here
             encrypted_llm_response= encrypt_llm_response(payload, llm_response)
