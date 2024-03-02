@@ -25,9 +25,9 @@ resource "aws_internet_gateway" "enclave_igw" {
 }
 
 resource "aws_subnet" "enclave_subnet" {
-  vpc_id = aws_vpc.enclave_vpc.id
-  cidr_block = "10.0.1.0/24"
-  availability_zone = "us-west-1a"
+  vpc_id                  = aws_vpc.enclave_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "us-west-1a"
   map_public_ip_on_launch = true
 
   tags = {
@@ -49,8 +49,8 @@ resource "aws_route_table" "enclave_rtb" {
 }
 
 resource "aws_route_table_association" "enclave_rtb_association" {
-    subnet_id      = aws_subnet.enclave_subnet.id
-    route_table_id = aws_route_table.enclave_rtb.id
+  subnet_id      = aws_subnet.enclave_subnet.id
+  route_table_id = aws_route_table.enclave_rtb.id
 }
 
 resource "aws_security_group" "enclave_security_group" {
@@ -59,16 +59,16 @@ resource "aws_security_group" "enclave_security_group" {
   vpc_id = aws_vpc.enclave_vpc.id
 
   ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"] 
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -77,7 +77,7 @@ resource "aws_security_group" "enclave_security_group" {
 }
 
 resource "aws_network_interface" "enclave_network_interface" {
-  subnet_id = aws_subnet.enclave_subnet.id
+  subnet_id       = aws_subnet.enclave_subnet.id
   security_groups = [aws_security_group.enclave_security_group.id]
 
   tags = {
@@ -92,9 +92,15 @@ resource "aws_instance" "enclave_instance" {
   enclave_options {
     enabled = true
   }
+  ebs_block_device {
+    device_name           = "/dev/xvda"
+    volume_size           = 20
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
   network_interface {
     network_interface_id = aws_network_interface.enclave_network_interface.id
-    device_index = 0
+    device_index         = 0
   }
   tags = {
     Name = "enclave-instance"

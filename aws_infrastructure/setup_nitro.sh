@@ -27,12 +27,15 @@ sudo sh -c "echo -e 'memory_mib: 512\ncpu_count: 2' > /etc/nitro_enclaves/alloca
 # Get the code repository and download the model
 sudo dnf update
 sudo dnf install git -y
-git clone https://github.com/evangronberg/securing-rag-with-tees.git
+sudo git clone https://github.com/evangronberg/securing-rag-with-tees.git
 cd securing-rag-with-tees
-python3 -m virtualenv .venv 
+sudo curl -O https://bootstrap.pypa.io/get-pip.py
+sudo python3 get-pip.py
+sudo python3 -m pip install virtualenv
+sudo python3 -m virtualenv .venv 
 source .venv/bin/activate
-pip install -r requirements.txt
-python download_model.py
+sudo pip install -r requirements.txt
+sudo python download_model.py
 
 
 # THE BLOCK OF COMMANDS BELOW ARE ADAPTED FROM THE FOLLOWING LINK:
