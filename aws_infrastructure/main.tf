@@ -94,7 +94,7 @@ resource "aws_instance" "enclave_instance" {
   }
   ebs_block_device {
     device_name           = "/dev/xvda"
-    volume_size           = 20
+    volume_size           = 40
     volume_type           = "gp3"
     delete_on_termination = true
   }
