@@ -13,6 +13,8 @@ sudo dnf install aws-nitro-enclaves-cli-devel -y
 sudo usermod -aG ne ec2-user
 # Add your user to the docker user group.
 sudo usermod -aG docker ec2-user
+# Set the memory and CPU limit for the enclave
+sudo sh -c "echo -e 'memory_mib: 16384\ncpu_count: 4' > /etc/nitro_enclaves/allocator.yaml"
 # Run the following command to allocate the resource specified in the configuration
 # file (/etc/nitro_enclaves/allocator.yaml) and to ensure that they are automatically
 # allocated every time the instance starts.
@@ -20,9 +22,6 @@ sudo systemctl enable --now nitro-enclaves-allocator.service
 # Start the Docker service and ensure that it starts every time the instance starts.
 sudo systemctl enable --now docker
 
-
-# Set the memory and CPU limit for the enclave
-sudo sh -c "echo -e 'memory_mib: 512\ncpu_count: 2' > /etc/nitro_enclaves/allocator.yaml"
 
 # Get the code repository and download the model
 sudo dnf update
@@ -46,4 +45,4 @@ docker build enclave_rag_llm -t enclave_rag_llm --build-arg KMS_KEY_ID=${KMS_KEY
 # Convert the Docker image to an Enclave image file
 sudo nitro-cli build-enclave --docker-uri enclave_rag_llm:latest --output-file enclave_rag_llm.eif
 # Run the Enclave using the image file produced above; specify Enclave size
-sudo nitro-cli run-enclave --cpu-count 2 --memory 512 --enclave-cid 16 --eif-path enclave_rag_llm.eif --debug-mode
+sudo nitro-cli run-enclave --cpu-count 2 --memory 16384 --enclave-cid 16 --eif-path enclave_rag_llm.eif --debug-mode

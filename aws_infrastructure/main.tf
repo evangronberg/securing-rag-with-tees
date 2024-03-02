@@ -93,7 +93,7 @@ resource "aws_network_interface" "enclave_network_interface" {
 
 resource "aws_instance" "enclave_instance" {
   ami           = "ami-07619059e86eaaaa2" # Amazon Linux 2023 AMI
-  instance_type = "m5.xlarge"
+  instance_type = "m5.2xlarge"
 
   enclave_options {
     enabled = true
