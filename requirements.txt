@@ -1,9 +1,9 @@
 torch
-openai
-jupyter
-chromadb
-tiktoken
-langchain
-wikipedia
+# openai
+# jupyter
+# chromadb
+# tiktoken
+# langchain
+# wikipedia
 transformers
-python-dotenv
+# python-dotenv
