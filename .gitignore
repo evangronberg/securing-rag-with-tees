@@ -3,3 +3,5 @@
 terraform*
 .terraform*
 .ipynb_checkpoints/
+enclave_rag_llm/model/*.json
+enclave_rag_llm/model/*.safetensors

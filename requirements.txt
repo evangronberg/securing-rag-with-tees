@@ -1,7 +1,9 @@
+torch
 openai
 jupyter
 chromadb
 tiktoken
 langchain
 wikipedia
+transformers
 python-dotenv
