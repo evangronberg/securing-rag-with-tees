@@ -46,4 +46,4 @@ docker build enclave_rag_llm -t enclave_rag_llm
 # Convert the Docker image to an Enclave image file
 sudo nitro-cli build-enclave --docker-uri enclave_rag_llm:latest --output-file enclave_rag_llm.eif
 # Run the Enclave using the image file produced above; specify Enclave size
-sudo nitro-cli run-enclave --cpu-count 2 --memory 512 --enclave-cid 16 --eif-path enclave_rag_llm.eif --debug-mode
+sudo nitro-cli run-enclave --cpu-count 2 --memory 512 --eif-path enclave_rag_llm.eif --debug-mode
