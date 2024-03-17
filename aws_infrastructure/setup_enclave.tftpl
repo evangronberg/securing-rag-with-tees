@@ -25,9 +25,9 @@ sudo systemctl enable --now docker
 
 
 # Get the code repository and download the model
-sudo dnf install git -y
-sudo git clone https://github.com/evangronberg/securing-rag-with-tees.git
-cd securing-rag-with-tees
+sudo aws s3 cp s3://${S3_BUCKET_NAME}/enclave_parent.zip .
+sudo unzip enclave_parent.zip
+cd enclave_parent
 sudo curl -O https://bootstrap.pypa.io/get-pip.py
 sudo python3 get-pip.py
 sudo python3 -m pip install virtualenv
@@ -41,8 +41,8 @@ sudo ./.venv/bin/python download_model.py
 # https://docs.aws.amazon.com/enclaves/latest/user/getting-started.html
 
 # Build the Docker image that will go inside the Enclave
-docker build enclave_rag_llm -t enclave_rag_llm --build-arg KMS_KEY_ID=${KMS_KEY_ID}
+docker build enclave_contents -t enclave_contents --build-arg KMS_KEY_ID=${KMS_KEY_ID}
 # Convert the Docker image to an Enclave image file
-sudo nitro-cli build-enclave --docker-uri enclave_rag_llm:latest --output-file enclave_rag_llm.eif
+sudo nitro-cli build-enclave --docker-uri enclave_contents:latest --output-file enclave_contents.eif
 # Run the Enclave using the image file produced above; specify Enclave size
-sudo nitro-cli run-enclave --cpu-count 4 --memory 16384 --enclave-cid 16 --eif-path enclave_rag_llm.eif --debug-mode
+sudo nitro-cli run-enclave --cpu-count 4 --memory 16384 --enclave-cid 16 --eif-path enclave_contents.eif --debug-mode

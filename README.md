@@ -6,15 +6,13 @@ This is the repository for the "Securing Retrieval Augmented Generation (RAG) wi
 
 ## Usage
 
-Once you have cloned this repo, run the following commands to set up your TEE:
+Once you have cloned this repo, run the launch script inside the repository's main directory to set up your TEE:
 
 ```bash
-cd aws_infrastructure
-terraform init
-terraform apply -auto-approve
+source launch.sh
 ```
 
-> Note that, for the above commands to work, you'll need (1) the AWS CLI installed and set up with an access key for your account and (2) Terraform installed.
+> Note that, for the script to work, you'll need (1) the AWS CLI installed and set up with an access key for your account and (2) Terraform installed.
 
 Once you have done this, access the AWS Management Console and use EC2 Instance Connect to tunnel into `enclave-instance`. Then run the following commands:
 

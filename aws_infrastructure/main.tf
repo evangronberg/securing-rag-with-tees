@@ -8,6 +8,46 @@ provider "aws" {
   region = "us-west-1"
 }
 
+resource "random_id" "enclave_bucket_id" {
+  byte_length = 4
+}
+
+resource "aws_s3_bucket" "enclave_bucket" {
+  bucket = "enclave-bucket-${random_id.enclave_bucket_id.hex}"
+}
+
+resource "aws_s3_bucket_ownership_controls" "enclave_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.enclave_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "enclave_bucket_public_access_block" {
+  bucket = aws_s3_bucket.enclave_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_acl" "enclave_bucket_acl" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.enclave_bucket_ownership_controls,
+    aws_s3_bucket_public_access_block.enclave_bucket_public_access_block,
+  ]
+
+  bucket = aws_s3_bucket.enclave_bucket.id
+  acl    = "public-read"
+}
+
+resource "aws_s3_object" "enclave_parent_zip" {
+  bucket = aws_s3_bucket.enclave_bucket.id
+  key    = "enclave_parent.zip"
+  source = "../enclave_parent.zip"
+}
+
 resource "aws_kms_key" "enclave_kms_key" {
   tags = {
     Name = "enclave-kms-key"
@@ -91,9 +131,39 @@ resource "aws_network_interface" "enclave_network_interface" {
   }
 }
 
+resource "aws_iam_role" "enclave_role" {
+  name = "enclave-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "encalve_role_s3_policy_attachment" {
+  role = aws_iam_role.enclave_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_instance_profile" "enclave_instance_profile" {
+  name = "enclave-instance-profile"
+  role = aws_iam_role.enclave_role.name
+}
+
 resource "aws_instance" "enclave_instance" {
+  depends_on = [aws_s3_object.enclave_parent_zip]
+
   ami           = "ami-07619059e86eaaaa2" # Amazon Linux 2023 AMI
   instance_type = "m5.2xlarge"
+
+  iam_instance_profile = aws_iam_instance_profile.enclave_instance_profile.name
 
   enclave_options {
     enabled = true
@@ -113,6 +183,9 @@ resource "aws_instance" "enclave_instance" {
   }
   user_data = templatefile(
     "${path.module}/setup_enclave.tftpl",
-    {KMS_KEY_ID=aws_kms_key.enclave_kms_key.key_id}
+    {
+      KMS_KEY_ID=aws_kms_key.enclave_kms_key.key_id,
+      S3_BUCKET_NAME=aws_s3_bucket.enclave_bucket.bucket
+    }
   )
 }

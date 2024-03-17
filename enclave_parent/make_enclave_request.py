@@ -39,7 +39,7 @@ def make_enclave_request(prompt: str):
     request = credentials | {'Prompt': prompt}
     vsock_socket = socket.socket(socket.AF_VSOCK, socket.SOCK_STREAM)
     # NOTE: 16 is the Enclave CID set in this repo's
-    # securing-rag-with-tees/aws_infrastructure/setup_enclave.sh
+    # securing-rag-with-tees/aws_infrastructure/setup_enclave.tftpl
     cid, port = 16, 5000
     vsock_socket.connect((cid, port))
     vsock_socket.send(str.encode(json.dumps(request)))

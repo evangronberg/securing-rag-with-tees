@@ -13,8 +13,8 @@ def download_model(model_name: str) -> None:
     model = AutoModelForCausalLM.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    tokenizer.save_pretrained('enclave_rag_llm/model')
-    model.save_pretrained('enclave_rag_llm/model')
+    tokenizer.save_pretrained('enclave_contents/model')
+    model.save_pretrained('enclave_contents/model')
 
     return
 
