@@ -1,5 +1,7 @@
 # Securing RAG with TEEs
 
+> Consider this video for model choice: https://www.youtube.com/watch?v=NFgEgqua-fg
+
 This is the repository for the "Securing Retrieval Augmented Generation (RAG) with Trusted Execution Environments (TEEs)" paper. It seeks secure a RAG-enabled LLM (Large Language Model) using TEEs – namely, the AWS TEE offering, Nitro Enclaves.
 
 ## Usage
@@ -14,7 +16,7 @@ terraform apply -auto-approve
 
 > Note that, for the above commands to work, you'll need (1) the AWS CLI installed and set up with an access key for your account and (2) Terraform installed.
 
-Once you have done this, access the AWS Management Console and connect to the `enclave-instance` EC2. Then run the following commands:
+Once you have done this, access the AWS Management Console and use EC2 Instance Connect to tunnel into `enclave-instance`. Then run the following commands:
 
 ```bash
 cd /securing-rag-with-tees
