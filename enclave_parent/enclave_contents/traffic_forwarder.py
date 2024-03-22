@@ -33,7 +33,7 @@ def run_server(local_port: int, remote_cid: int, remote_port: int) -> None:
 
             outgoing_thread.start()
             incoming_thread.start()
-    
+
     finally:
         new_thread = threading.Thread(
             target=run_server, args=(local_port, remote_cid, remote_port))
@@ -54,9 +54,9 @@ def forward(source: socket.socket, destination: socket.socket) -> None:
             destination.shutdown(socket.SHUT_WR)
 
 @click.command()
-@click.option('-lp', '--local-port', required=True)
-@click.option('-rc', '--remote-cid', required=True)
-@click.option('-rp', '--remote-port', required=True)
+@click.option('-lp', '--local-port', required=True, type=int)
+@click.option('-rc', '--remote-cid', required=True, type=int)
+@click.option('-rp', '--remote-port', required=True, type=int)
 def start_traffic_forwarder(
     local_port: int, remote_cid: int, remote_port: int
 ) -> None:

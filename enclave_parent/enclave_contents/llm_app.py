@@ -10,7 +10,7 @@ import socket
 
 # External dependencies
 import boto3
-import transformers
+# import transformers
 
 def decrypt_prompt(payload: dict) -> str:
     """
@@ -69,7 +69,8 @@ def run_app() -> None:
             }
         else:
             llm_response = prompt.upper() # TODO: Insert actual LLM here
-            encrypted_llm_response= encrypt_llm_response(payload, llm_response)
+            encrypted_llm_response = encrypt_llm_response(
+                payload, llm_response)
             result = {
                 'EncryptedLLMResponse': base64.b64encode(
                     encrypted_llm_response).decode('utf-8')

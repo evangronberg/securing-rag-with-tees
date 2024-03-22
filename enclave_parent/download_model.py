@@ -16,7 +16,5 @@ def download_model(model_name: str) -> None:
     tokenizer.save_pretrained('enclave_contents/model')
     model.save_pretrained('enclave_contents/model')
 
-    return
-
 if __name__ == '__main__':
     download_model('bigscience/bloom-560m')

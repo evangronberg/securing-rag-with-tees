@@ -4,23 +4,32 @@ app that interfaces with the Nitro Enclave.
 """
 
 # Python-native dependencies
-import json
-import socket
+import base64
 
 # External dependencies
 import click
+import boto3
 import requests
 
 def get_aws_session_credentials() -> dict:
     """
     """
+    token_url = 'http://169.254.169.254/latest/api/token'
+    token_headers = {'X-aws-ec2-metadata-token-ttl-seconds': '21600'}
+    token_response = requests.put(token_url, headers=token_headers)
+    token = token_response.text
+
+    metadata_url = 'http://169.254.169.254/latest/meta-data'
+    metadata_headers = {'X-aws-ec2-metadata-token': token}
+
     instance_profile_name = requests.get(
-        'http://169.254.169.254/latest/meta-data/iam/security-credentials'
+        f'{metadata_url}/iam/security-credentials/',
+        headers=metadata_headers
     ).text
 
     security_credentials = requests.get(
-        'http://169.254.169.254/latest/meta-data/iam/' +\
-        f'security-credentials/{instance_profile_name}'
+        f'{metadata_url}/iam/security-credentials/{instance_profile_name}',
+        headers=metadata_headers
     ).json()
 
     return {
@@ -30,21 +39,55 @@ def get_aws_session_credentials() -> dict:
         'region': 'us-west-1'
     }
 
+def get_instance_public_ip() -> str:
+    """
+    """
+    token_url = 'http://169.254.169.254/latest/api/token'
+    token_headers = {'X-aws-ec2-metadata-token-ttl-seconds': '21600'}
+    token_response = requests.put(token_url, headers=token_headers)
+    token = token_response.text
+
+    metadata_url = 'http://169.254.169.254/latest/meta-data'
+    metadata_headers = {'X-aws-ec2-metadata-token': token}
+
+    instance_public_ip = requests.get(
+        f'{metadata_url}/public-ipv4/', headers=metadata_headers
+    ).text
+
+    return instance_public_ip
+
+def encrypt_prompt(kms, prompt: str):
+    """
+    """
+    encrypted_prompt = base64.b64decode(kms.encrypt(
+        KeyId='alias/enclave-kms-key-alias', Plaintext=prompt
+    )[u'CiphertextBlob']).decode() # TODO: Get rid of the u''?
+    return encrypted_prompt
+
+def decrypt_llm_response(kms, enclave_response):
+    """
+    """
+    decrypted_llm_response = kms.decrypt(
+        CiphertextBlob=base64.b64decode(enclave_response)
+    )['Plaintext'].decode()
+    return decrypted_llm_response
+
 @click.command()
 @click.option('-p', '--prompt', required=True)
-def make_enclave_request(prompt: str):
+def make_enclave_request(prompt: str) -> None:
     """
     """
+    kms = boto3.client('kms', region_name='us-west-1')
+    encrypted_prompt = encrypt_prompt(kms, prompt)
     credentials = get_aws_session_credentials()
-    request = credentials | {'Prompt': prompt}
-    vsock_socket = socket.socket(socket.AF_VSOCK, socket.SOCK_STREAM)
-    # NOTE: 16 is the Enclave CID set in this repo's
-    # securing-rag-with-tees/aws_infrastructure/setup_enclave.tftpl
-    cid, port = 16, 5000
-    vsock_socket.connect((cid, port))
-    vsock_socket.send(str.encode(json.dumps(request)))
-    print(vsock_socket.recv(1024).decode())
-    vsock_socket.close()
+    request = credentials | {'EncryptedPrompt': encrypted_prompt}
+    instance_public_ip = get_instance_public_ip()
+    url = f'http://{instance_public_ip}:5001'
+    enclave_response = requests.post(url, json=request).json()
+    decrypted_llm_response = decrypt_llm_response(
+        kms, enclave_response['EncryptedData']
+    )
+    print(decrypted_llm_response)
 
 if __name__ == '__main__':
     make_enclave_request()

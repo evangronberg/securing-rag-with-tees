@@ -2,6 +2,5 @@
 .venv/
 terraform*
 .terraform*
+enclave_parent.zip
 .ipynb_checkpoints/
-enclave_rag_llm/model/*.json
-enclave_rag_llm/model/*.safetensors

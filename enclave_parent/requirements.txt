@@ -1,5 +1,7 @@
-torch
+# torch
+flask
 click
+boto3
 requests
 # openai
 # jupyter
@@ -7,5 +9,5 @@ requests
 # tiktoken
 # langchain
 # wikipedia
-transformers
+# transformers
 # python-dotenv
