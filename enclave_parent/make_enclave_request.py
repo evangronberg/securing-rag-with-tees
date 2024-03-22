@@ -59,9 +59,9 @@ def get_instance_public_ip() -> str:
 def encrypt_prompt(kms, prompt: str):
     """
     """
-    encrypted_prompt = base64.b64decode(kms.encrypt(
+    encrypted_prompt = base64.b64encode(kms.encrypt(
         KeyId='alias/enclave-kms-key-alias', Plaintext=prompt
-    )[u'CiphertextBlob']).decode() # TODO: Get rid of the u''?
+    )['CiphertextBlob']).decode() # TODO: Get rid of the u''?
     return encrypted_prompt
 
 def decrypt_llm_response(kms, enclave_response):
