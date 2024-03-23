@@ -39,23 +39,6 @@ def get_aws_session_credentials() -> dict:
         'region': 'us-west-1'
     }
 
-def get_instance_public_ip() -> str:
-    """
-    """
-    token_url = 'http://169.254.169.254/latest/api/token'
-    token_headers = {'X-aws-ec2-metadata-token-ttl-seconds': '21600'}
-    token_response = requests.put(token_url, headers=token_headers)
-    token = token_response.text
-
-    metadata_url = 'http://169.254.169.254/latest/meta-data'
-    metadata_headers = {'X-aws-ec2-metadata-token': token}
-
-    instance_public_ip = requests.get(
-        f'{metadata_url}/public-ipv4/', headers=metadata_headers
-    ).text
-
-    return instance_public_ip
-
 def encrypt_prompt(kms, prompt: str):
     """
     """
@@ -81,9 +64,8 @@ def make_enclave_request(prompt: str) -> None:
     encrypted_prompt = encrypt_prompt(kms, prompt)
     credentials = get_aws_session_credentials()
     request = credentials | {'EncryptedPrompt': encrypted_prompt}
-    instance_public_ip = get_instance_public_ip()
-    url = f'http://{instance_public_ip}:5001'
-    enclave_response = requests.post(url, json=request).json()
+    enclave_response = requests.post(
+        'http://127.0.0.1:5001', json=request).json()
     decrypted_llm_response = decrypt_llm_response(
         kms, enclave_response['EncryptedData']
     )

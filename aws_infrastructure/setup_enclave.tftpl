@@ -49,6 +49,6 @@ sudo nitro-cli build-enclave --docker-uri enclave_contents:latest --output-file 
 sudo nitro-cli run-enclave --cpu-count 4 --memory 16384 --enclave-cid 16 --eif-path enclave_contents.eif --debug-mode
 
 
-# Start the proxy API in the background
-# (see `/home/ec2-user/nohup.out` for logs)
-nohup ./.venv/bin/python proxy_api.py &
+# # Start the proxy API in the background
+# # (see `/home/ec2-user/nohup.out` for logs)
+# nohup ./.venv/bin/python proxy_api.py &

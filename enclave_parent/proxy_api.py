@@ -26,11 +26,5 @@ def x():
     vsock_socket.close()
     return jsonify(received_data)
 
-def run_api():
-    """
-    Kicks off the proxy API.
-    """
-    api.run(host='0.0.0.0', port=5001)
-
 if __name__ == '__main__':
-    run_api()
+    api.run(host='0.0.0.0', port=5001, debug=True)

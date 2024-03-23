@@ -17,7 +17,7 @@ def run_server(local_port: int, remote_cid: int, remote_port: int) -> None:
     """
     try:
         docking_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        docking_socket.bind(('', local_port))
+        docking_socket.bind(('127.0.0.1', local_port))
         docking_socket.listen(5)
 
         while True:
@@ -66,7 +66,10 @@ def start_traffic_forwarder(
     traffic_forwarder_thread = threading.Thread(
         target=run_server, args=(local_port, remote_cid, remote_port))
     traffic_forwarder_thread.start()
-
+    print(
+        f'Started forwarder on 127.0.0.1:{local_port} '
+        f'{remote_cid}:{remote_port}'
+    )
     while True:
         time.sleep(60)
 
