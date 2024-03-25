@@ -65,7 +65,8 @@ def make_enclave_request(prompt: str) -> None:
     credentials = get_aws_session_credentials()
     request = credentials | {'EncryptedPrompt': encrypted_prompt}
     enclave_response = requests.post(
-        'http://127.0.0.1:5001', json=request).json()
+        'http://127.0.0.1:5001', json=request, timeout=30
+    ).json()
     decrypted_llm_response = decrypt_llm_response(
         kms, enclave_response['EncryptedData']
     )

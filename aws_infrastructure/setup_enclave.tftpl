@@ -38,6 +38,11 @@ sudo ./.venv/bin/python -m pip install -r requirements.txt
 # sudo ./.venv/bin/python download_model.py
 
 
+# Build the Docker image that will be used as the
+# base for the one that gets put in the enclave
+docker build enclave_base_image -t enclave_base_image
+
+
 # THE BLOCK OF COMMANDS BELOW ARE ADAPTED FROM THE FOLLOWING LINK:
 # https://docs.aws.amazon.com/enclaves/latest/user/getting-started.html
 

@@ -1,5 +1,4 @@
 .venv/
-error*
 terraform*
 .terraform*
 enclave_parent.zip
